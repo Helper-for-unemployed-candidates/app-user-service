@@ -1,4 +1,4 @@
-package com.jobhunter.appuserservice.entities;
+package com.jobhunter.appuserservice.enums;
 
 public enum TypeOfEducation {
     BACHELOR,

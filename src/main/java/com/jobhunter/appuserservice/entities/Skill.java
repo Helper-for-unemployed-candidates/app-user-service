@@ -1,10 +1,7 @@
 package com.jobhunter.appuserservice.entities;
 
 import com.jobhunter.appuserservice.entities.template.AbsUUIDEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +9,6 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Skill extends AbsUUIDEntity {
+    @Column(nullable = false, unique = true)
     private String name;
-
 }

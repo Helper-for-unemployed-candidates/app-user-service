@@ -2,9 +2,7 @@ package com.jobhunter.appuserservice.entities;
 
 
 import com.jobhunter.appuserservice.entities.template.AbsUUIDEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -16,11 +14,20 @@ import java.util.Date;
 @Builder
 @Entity
 public class Experience extends AbsUUIDEntity {
+    @Column(nullable = false)
     private String companyName;
-    private Date from;
-    private Date to;
+
+    @Column(nullable = false, columnDefinition = "timestamp(6) CHECK (from_date < now())")
+    private Date fromDate;
+
+    private Date toDate;
+
+    @Column(nullable = false)
     private String position;
+
     private String description;
+
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Resume resume;
 }
