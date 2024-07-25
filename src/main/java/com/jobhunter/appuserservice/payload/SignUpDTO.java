@@ -1,6 +1,6 @@
 package com.jobhunter.appuserservice.payload;
 
-import com.jobhunter.appuserservice.enums.Role;
+import com.jobhunter.appuserservice.enums.RoleEnum;
 import com.jobhunter.appuserservice.utils.MessageConstants;
 import com.jobhunter.appuserservice.utils.RestConstants;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class SignUpDTO {
     @NotNull(message = MessageConstants.ROLE_SHOULD_BE_CHOSEN)
-    private Role role;
+    private RoleEnum role;
 
     private ApplicantCreateDTO applicant;
 

@@ -2,10 +2,9 @@ package com.jobhunter.appuserservice.mapper;
 
 import com.jobhunter.appuserservice.entities.Company;
 import com.jobhunter.appuserservice.payload.CompanyCreateDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
+import com.jobhunter.appuserservice.payload.CompanyDTO;
+import com.jobhunter.appuserservice.payload.CompanyUpdateDTO;
+import org.mapstruct.*;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING
@@ -13,7 +12,17 @@ import org.mapstruct.MappingTarget;
 public interface CompanyMapper {
     Company toCompany(CompanyCreateDTO companyCreateDTO);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "companySphere", expression = "java( company.getCompanySphere().getName() )")
+    CompanyDTO toCompanyDTO(Company company);
+
+    @IgnoreId
     @Mapping(target = "user", ignore = true)
     void updateCompanyForSignUp(@MappingTarget Company company, CompanyCreateDTO companyCreateDTO);
+
+    @IgnoreId
+    @BeanMapping(
+            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+    )
+    void updateCompany(@MappingTarget Company company, CompanyUpdateDTO companyUpdateDTO);
 }

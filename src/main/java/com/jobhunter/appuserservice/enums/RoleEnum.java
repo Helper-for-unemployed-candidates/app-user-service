@@ -1,6 +1,6 @@
 package com.jobhunter.appuserservice.enums;
 
-public enum Role {
+public enum RoleEnum {
     ADMIN,
     APPLICANT,
     COMPANY

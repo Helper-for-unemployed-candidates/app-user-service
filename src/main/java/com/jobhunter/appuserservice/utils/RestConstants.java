@@ -15,7 +15,7 @@ public interface RestConstants {
     };
 
     String BASE_PATH = "/api";
-    String BASE_PATH_V1 = BASE_PATH + "/v1/user";
+    String BASE_PATH_V1 = BASE_PATH + "/v1/u";
 
     String AUTHENTICATION_HEADER = "Authorization";
     ObjectMapper objectMapper = new ObjectMapper();
@@ -74,4 +74,6 @@ public interface RestConstants {
     String MAX_LENGTH = "^.{8,30}$";
     String UZB_CODE = "+998";
     String UZB_PHONE_NUMBER_REGEX = "^(33|55|88|90|91|93|94|95|97|99)\\d{7}$";
+    String APPLICANT = "applicant";
+    String COMPANY = "company";
 }

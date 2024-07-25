@@ -3,7 +3,6 @@ package com.jobhunter.appuserservice.controller;
 import com.jobhunter.appuserservice.payload.*;
 import com.jobhunter.appuserservice.repository.projection.SphereProjection;
 import com.jobhunter.appuserservice.service.AuthService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +30,7 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public Response<String> forgotPassword(String username) {
+    public Response<CodeDTO> forgotPassword(String username) {
         return authService.forgotPassword(username);
     }
 

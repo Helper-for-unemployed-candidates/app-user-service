@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,4 +20,6 @@ public interface EmailCodeRepository extends JpaRepository<EmailCode, UUID> {
                     AND ignored = false
             )""", nativeQuery = true)
     boolean nonOverLimit(@Param("limitEmail") int limitEmail, @Param("limitHour") int limitHour, @Param("email") String email);
+
+    Optional<EmailCode> findFirstByEmailOrderByCreatedAtDesc(String email);
 }

@@ -9,13 +9,16 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
 @Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING
+        componentModel = MappingConstants.ComponentModel.SPRING,
+        uses = AddressMapper.class
 )
 public interface UserMapper {
+
+    @Mapping(target = "avatarId", expression = "java( user.getAvatar().getId() )")
     UserWithoutPasswordDTO toUserWithoutPasswordDTO(User user);
 
     User toUser(SignUpDTO signUpDTO);
 
-    @Mapping(target = "id", ignore = true)
+    @IgnoreId
     void updateUserForSignUp(@MappingTarget User user, SignUpDTO signUpDTO);
 }

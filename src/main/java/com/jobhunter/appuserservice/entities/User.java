@@ -2,7 +2,7 @@ package com.jobhunter.appuserservice.entities;
 
 
 import com.jobhunter.appuserservice.entities.template.AbsUUIDEntity;
-import com.jobhunter.appuserservice.enums.Role;
+import com.jobhunter.appuserservice.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,7 +39,7 @@ public class User extends AbsUUIDEntity implements UserDetails {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private RoleEnum role;
 
     @Builder.Default
     private boolean accountNonExpired = true;

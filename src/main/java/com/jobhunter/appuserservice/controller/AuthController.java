@@ -30,13 +30,13 @@ public interface AuthController {
     Response<CodeDTO> resendVerificationCode(@RequestParam String username);
 
     @GetMapping(FORGOT_PASSWORD_PATH)
-    Response<String> forgotPassword(@RequestParam String username);
+    Response<CodeDTO> forgotPassword(@RequestParam String username);
 
     @PutMapping(RESET_PASSWORD_PATH)
     Response<String> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO);
 
     @PostMapping(VERIFY_ACCOUNT_PATH)
-    Response<String> verifyAccount(@Valid @PathVariable VerifyDTO verifyDTO);
+    Response<String> verifyAccount(@Valid @RequestBody VerifyDTO verifyDTO);
 
     @GetMapping(INITIAL_DATA_PATH)
     Response<List<SphereProjection>> initialData();

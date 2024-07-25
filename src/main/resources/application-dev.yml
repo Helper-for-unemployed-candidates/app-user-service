@@ -39,6 +39,10 @@ app:
   utils:
     limit-sms-code: 10
     limit-sms-code-duration-hour: 3
+    limit-email-code: 20
+    limit-email-code-duration-hour: 24
+  upload:
+    folder: /attachments
 
 jwt:
   access:

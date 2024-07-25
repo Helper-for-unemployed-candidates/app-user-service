@@ -4,7 +4,7 @@ import com.jobhunter.appuserservice.entities.Applicant;
 import com.jobhunter.appuserservice.entities.Company;
 import com.jobhunter.appuserservice.entities.Sphere;
 import com.jobhunter.appuserservice.entities.User;
-import com.jobhunter.appuserservice.enums.Role;
+import com.jobhunter.appuserservice.enums.RoleEnum;
 import com.jobhunter.appuserservice.exceptions.RestException;
 import com.jobhunter.appuserservice.mapper.ApplicantMapper;
 import com.jobhunter.appuserservice.mapper.CompanyMapper;
@@ -83,9 +83,9 @@ public class AuthServiceImpl implements AuthService {
 
         User user = checkIfUserAlreadyRegistered(signUpDTO);
 
-        Role role = signUpDTO.getRole();
-        if (Objects.equals(role, Role.APPLICANT)) return createApplicant(signUpDTO, user);
-        else if (Objects.equals(role, Role.COMPANY)) return createCompany(signUpDTO, user);
+        RoleEnum role = signUpDTO.getRole();
+        if (Objects.equals(role, RoleEnum.APPLICANT)) return createApplicant(signUpDTO, user);
+        else if (Objects.equals(role, RoleEnum.COMPANY)) return createCompany(signUpDTO, user);
         throw RestException.restThrow(MessageConstants.USER_HAS_TO_CHOOSE_A_ROLE);
     }
 
@@ -141,7 +141,7 @@ public class AuthServiceImpl implements AuthService {
         }
         company.setCompanySphere(sphere);
         companyRepository.save(company);
-        return sendVerificationCode(user);
+        return sendVerificationCode(user, false);
     }
 
     private Response<CodeDTO> createApplicant(SignUpDTO signUpDTO, User user) {
@@ -166,15 +166,15 @@ public class AuthServiceImpl implements AuthService {
         }
 
         applicantRepository.save(applicant);
-        return sendVerificationCode(user);
+        return sendVerificationCode(user, false);
     }
 
-    private Response<CodeDTO> sendVerificationCode(User user) {
+    private Response<CodeDTO> sendVerificationCode(User user, boolean check) {
         if (Objects.nonNull(user.getPhone())) {
-            CodeDTO smsCodeDTO = smsService.sendVerificationSms(user);
+            CodeDTO smsCodeDTO = smsService.sendVerificationSms(user, check);
             return Response.successResponse(smsCodeDTO, MessageConstants.SMS_HAS_BEEN_SENT_TO_YOUR_PHONE_NUMBER);
         }
-        CodeDTO emailCodeDTO = emailService.sendVerificationEmail(user);
+        CodeDTO emailCodeDTO = emailService.sendVerificationEmail(user, check);
         return Response.successResponse(emailCodeDTO, MessageConstants.VERIFICATION_CODE_SENT_TO_EMAIL);
     }
 
@@ -198,29 +198,63 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Response<CodeDTO> resendVerificationCode(String username) {
-        User first = userRepository.findFirstByEmailIgnoreCaseOrPhoneIgnoreCaseAndEnabledFalse(username, username).orElseThrow(() -> RestException.restThrow(MessageConstants.INVALID_PHONE_NUMBER_OR_EMAIL));
-        if (Objects.nonNull(first.getPhone())) {
-            CodeDTO codeDTO = smsService.sendVerificationSms(first);
-            return Response.successResponse(codeDTO, MessageConstants.SMS_HAS_BEEN_SENT_TO_YOUR_PHONE_NUMBER);
-        }
-        CodeDTO emailCodeDTO = emailService.sendVerificationEmail(first);
-        return Response.successResponse(emailCodeDTO, MessageConstants.VERIFICATION_CODE_SENT_TO_EMAIL);
+        User first = userRepository.findFirstByEmailIgnoreCaseOrPhoneIgnoreCaseAndEnabledFalse(username, username)
+                .orElseThrow(() -> RestException.restThrow(MessageConstants.INVALID_PHONE_NUMBER_OR_EMAIL));
+        return sendVerificationCode(first, true);
     }
 
     @Override
     public Response<String> resetPassword(ResetPasswordDTO resetPasswordDTO) {
-        return null;
+        if (!Objects.equals(resetPasswordDTO.getPassword(), resetPasswordDTO.getConfirmPassword()))
+            throw RestException.restThrow(MessageConstants.PASSWORDS_AND_PRE_PASSWORD_NOT_EQUAL);
+
+        User user = verify(VerifyDTO.builder()
+                .email(resetPasswordDTO.getUsername())
+                .phoneNumber(resetPasswordDTO.getUsername())
+                .code(resetPasswordDTO.getCode())
+                .codeId(resetPasswordDTO.getCodeId())
+                .build());
+
+        if (!user.isEnabled())
+            throw RestException.restThrow(MessageConstants.USER_NOT_FOUND);
+
+        user.setPassword(passwordEncoder.encode(resetPasswordDTO.getPassword()));
+        userRepository.save(user);
+        return Response.successResponse(MessageConstants.PASSWORD_SUCCESSFULLY_CHANGED);
     }
 
     @Override
-    public Response<String> forgotPassword(String email) {
-        return null;
+    public Response<CodeDTO> forgotPassword(String username) {
+        User user = userRepository.findFirstByEmailIgnoreCaseOrPhoneIgnoreCase(username, username)
+                .orElseThrow(() -> RestException.restThrow(MessageConstants.INVALID_PHONE_NUMBER_OR_EMAIL));
+        if (!user.isEnabled())
+            throw RestException.restThrow(MessageConstants.USER_NOT_FOUND);
+        return sendVerificationCode(user, true);
     }
 
     @Override
     public Response<String> verifyAccount(VerifyDTO verifyDTO) {
-        smsService.checkIfVerificationCodeIsValidOrThrow(verifyDTO);
-        return null;
+        User user = verify(verifyDTO);
+        if (user.isEnabled())
+            throw RestException.restThrow(MessageConstants.USER_ALREADY_VERIFIED);
+
+        user.setEnabled(true);
+        userRepository.save(user);
+
+        return Response.successResponse(MessageConstants.VERIFIED);
+    }
+
+    private User verify(VerifyDTO verifyDTO) {
+        if (verifyDTO.getPhoneNumber() != null) {
+            smsService.checkIfVerificationCodeIsValidOrThrow(verifyDTO);
+            return userRepository.findByPhoneIgnoreCase(verifyDTO.getPhoneNumber())
+                    .orElseThrow(() -> RestException.restThrow(MessageConstants.INVALID_PHONE_NUMBER));
+
+        } else if (verifyDTO.getEmail() != null) {
+            emailService.checkIfVerificationCodeIsValidOrThrow(verifyDTO);
+            return userRepository.findByEmailIgnoreCase(verifyDTO.getEmail())
+                    .orElseThrow(() -> RestException.restThrow(MessageConstants.INVALID_EMAIL));
+        } else throw RestException.restThrow(MessageConstants.EMAIL_OR_PHONE_NUMBER_CAN_NOT_BE_EMPTY);
     }
 
     @Override
@@ -228,41 +262,7 @@ public class AuthServiceImpl implements AuthService {
         return Response.successResponse(sphereRepository.list());
     }
 
-    /*@Override
-    public User getUserById(String id) {
-        return userRepository.findById(id).orElseThrow(() -> RestException.restThrow(MessageConstants.USER_NOT_FOUND_WITH_ID + id));
-    }
-
-    @Override
-    public Response<String> signUp(SignUpDTO signUpDTO) {
-        if (!Objects.equals(signUpDTO.getPassword(), signUpDTO.getPrePassword()))
-            throw RestException.restThrow(MessageConstants.PASSWORDS_AND_PRE_PASSWORD_NOT_EQUAL);
-
-//        if (userRepository.existsByPhoneNumber(signUpDTO.getPhoneNumber()))
-//            throw RestException.restThrow(MessageConstants.PHONE_ALREADY_REGISTERED);
-
-        Optional<User> temp = userRepository.findByEmailIgnoreCase(signUpDTO.getEmail()).stream().findFirst();
-        if (temp.isPresent() && temp.get().isEnabled())
-            throw RestException.restThrow(MessageConstants.EMAIL_ALREADY_REGISTERED);
-        User user;
-        if (temp.isPresent()) {
-            userMapper.update(signUpDTO, temp.get());
-            user = temp.get();
-        } else
-            user = userMapper.toUser(signUpDTO);
-        user.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
-        user.setVerificationCode(UUID.randomUUID().toString());
-        user.setAdminSeen(false);
-        userRepository.save(user);
-
-        String url = frontHostname + frontVerificationUrl + "/" + user.getVerificationCode();
-        emailService.sendVerificationEmail(user, url);
-        return Response.successResponseForMsg(MessageConstants.ACCOUNT_CREATED + " " + MessageConstants.VERIFICATION_CODE_SENT_TO_EMAIL);
-    }
-
-
-
-
+    /*
     @Override
     public Response<String> resetPassword(ResetPasswordDTO resetPasswordDTO) {
         if (!Objects.equals(resetPasswordDTO.getPassword(), resetPasswordDTO.getPrePassword()))
@@ -293,27 +293,7 @@ public class AuthServiceImpl implements AuthService {
 
         return Response.successResponseForMsg(MessageConstants.LINK_SENT_FOR_FORGOT_PASSWORD);
     }
-
-    @Override
-    public Response<String> verifyAccount(String verificationCode) {
-        User user = userRepository.findByVerificationCode(verificationCode).orElseThrow(() -> RestException.restThrow(MessageConstants.USER_NOT_FOUND));
-
-        if (user.isEnabled())
-            throw RestException.restThrow(MessageConstants.USER_ALREADY_VERIFIED);
-
-        user.setVerificationCode(null);
-        user.setEnabled(true);
-        userRepository.save(user);
-        return Response.successResponseForMsg(MessageConstants.VERIFIED);
-    }
-
-    @Override
-    public Response<String> checkPasswordVerificationCode(String code) {
-        if (!userRepository.existsByVerificationCode(code))
-            throw RestException.restThrow(MessageConstants.VERIFICATION_CODE_ALREADY_USED);
-
-        return Response.successResponse();
-    }*/
+*/
 
     private TokenDTO makeTokenDTO(User user) {
         Timestamp tokenIssuedAt = new Timestamp(System.currentTimeMillis() / 1000 * 1000);

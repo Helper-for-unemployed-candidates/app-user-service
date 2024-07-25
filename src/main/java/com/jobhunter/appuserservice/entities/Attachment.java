@@ -17,5 +17,5 @@ public class Attachment extends AbsUUIDEntity {
     @Column(nullable = false)
     private String path;
     private long size;
-    private String type;
+    private String contentType;
 }

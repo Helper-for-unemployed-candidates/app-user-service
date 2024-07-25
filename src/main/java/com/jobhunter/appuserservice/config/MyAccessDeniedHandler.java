@@ -1,6 +1,7 @@
 package com.jobhunter.appuserservice.config;
 
 import com.jobhunter.appuserservice.exceptions.ExceptionHelper;
+import feign.Feign;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ public class MyAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
+
+
         ResponseEntity<?> responseEntity = exceptionHelper.handleException(accessDeniedException);
     }
 }

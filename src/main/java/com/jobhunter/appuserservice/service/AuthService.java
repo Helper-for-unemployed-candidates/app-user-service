@@ -22,7 +22,7 @@ public interface AuthService extends UserDetailsService {
     /**
      * @param username User's phone number or email.
      */
-    Response<String> forgotPassword(String username);
+    Response<CodeDTO> forgotPassword(String username);
 
     Response<String> verifyAccount(VerifyDTO verifyDTO);
 
