@@ -20,9 +20,10 @@ public class Follow extends AbsUUIDEntity {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Company company;
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private Applicant applicant;
-    private LocalDateTime followedAt;
 
+    private LocalDateTime followedAt;
 }

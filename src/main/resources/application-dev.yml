@@ -1,0 +1,89 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: root1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  liquibase:
+    change-log: classpath:liquibase/master.yaml
+    enabled: false
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+  mail:
+    host: email-smtp.eu-west-1.amazonaws.com
+    port: 25
+    protocol: smtp
+    username: AKIA44B5O66R2UF2C6N4
+    password: BBVXf2U8zWKWJsVIuhcbW6yGCx3h6cyJOgTkvI1AOIFC
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          port: 25
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+app:
+  mail-sender: dilshodlatipov748@gmail.com
+  eskiz:
+    email: dilshodlatipov445@gmail.com
+    password: TK26LwYZ1MoW7YWATRkyj04Gq59tNevZ3gt88jMw
+  utils:
+    limit-sms-code: 10
+    limit-sms-code-duration-hour: 3
+    limit-email-code: 20
+    limit-email-code-duration-hour: 24
+  upload:
+    folder: /attachments
+
+jwt:
+  access:
+    key: cksdIOJHGytgyuhd4651846DE7E0plmnlo22455hkfjsieioef45785654czxdkcjasincosaffd
+    expiration-time: 7200000000
+  refresh:
+    key: cksdIOJHGytgyuhd465owqpqpowwkoenuyydqlmnlo22455hkfjsieioef45dqwiowodjiowejjowiedkmd
+    expiration-time: 604800000
+  update-email:
+    key: 4514*0-=]#doiei8IUHBHYu78tgt5%&^7i8]
+    expiration-time: 86400000
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8762/eureka
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+springdoc:
+  api-docs:
+    path: /api/v3/api-docs
+  swagger-ui:
+    path: /api/swagger-ui.html
+
+logging:
+  level:
+    root: warn
+  file:
+    name: figure-this-shit-out.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 10
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"

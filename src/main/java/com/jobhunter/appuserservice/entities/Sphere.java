@@ -5,17 +5,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Entity
-public class Attachment extends AbsUUIDEntity {
-    private String originalName;
-    @Column(nullable = false)
-    private String path;
-    private long size;
-    private String contentType;
+@Builder
+public class Sphere extends AbsUUIDEntity {
+    @Column(nullable = false, unique = true)
+    private String name;
 }
