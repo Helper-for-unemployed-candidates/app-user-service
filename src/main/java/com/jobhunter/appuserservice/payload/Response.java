@@ -1,6 +1,7 @@
 package com.jobhunter.appuserservice.payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -12,9 +13,17 @@ import java.util.List;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response<T> implements Serializable {
+
+    @Schema(description = "Indicates whether the request was successful or not")
     private final boolean success;
+
+    @Schema(description = "Message associated with the response")
     private String message;
+
+    @Schema(description = "Data payload of the response")
     private T data;
+
+    @Schema(description = "List of error details if the request failed")
     private List<ErrorData> errors;
 
 
