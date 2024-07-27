@@ -43,7 +43,7 @@ app:
     limit-email-code-duration-hour: 24
   upload:
     folder: /attachments
-
+  in-dev: true
 jwt:
   access:
     key: cksdIOJHGytgyuhd4651846DE7E0plmnlo22455hkfjsieioef45785654czxdkcjasincosaffd
@@ -60,7 +60,7 @@ eureka:
     prefer-ip-address: true
   client:
     serviceUrl:
-      defaultZone: http://ec2-51-20-249-253.eu-north-1.compute.amazonaws.com:8762/eureka
+      defaultZone: http://ec2-51-20-67-130.eu-north-1.compute.amazonaws.com:8762/eureka
 
 management:
   tracing:

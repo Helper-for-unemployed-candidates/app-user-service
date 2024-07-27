@@ -10,7 +10,9 @@ import java.util.Random;
 public interface CommonUtils {
     Random random = new Random();
 
-    static String generateCode() {
+    static String generateCode(boolean inDev) {
+        if (inDev)
+            return "000000";
         return String.valueOf(random.nextInt(100000, 999999));
     }
 

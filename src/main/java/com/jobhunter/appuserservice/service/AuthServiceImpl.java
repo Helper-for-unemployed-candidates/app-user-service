@@ -75,8 +75,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public Response<CodeDTO> signUp(SignUpDTO signUpDTO) {
-        if (Objects.isNull(signUpDTO.getPhone()) && Objects.isNull(signUpDTO.getEmail()))
-            throw RestException.restThrow(MessageConstants.PHONE_NUMBER_AND_EMAIL_BOTH_CAN_NOT_BE_NULL);
+        /*if (Objects.isNull(signUpDTO.getPhone()) && Objects.isNull(signUpDTO.getEmail()))
+            throw RestException.restThrow(MessageConstants.PHONE_NUMBER_AND_EMAIL_BOTH_CAN_NOT_BE_NULL);*/
 
         if (!Objects.equals(signUpDTO.getPassword(), signUpDTO.getConfirmPassword()))
             throw RestException.restThrow(MessageConstants.PASSWORDS_AND_PRE_PASSWORD_NOT_EQUAL);
@@ -92,13 +92,16 @@ public class AuthServiceImpl implements AuthService {
     private User checkIfUserAlreadyRegistered(SignUpDTO signUpDTO) {
         User user;
         Optional<User> tempUser;
-        if (Objects.nonNull(signUpDTO.getPhone())) {
-            smsService.checkIfThereAreTooManyRequestsOrThrow(signUpDTO.getPhone());
-            tempUser = userRepository.findByPhoneIgnoreCase(signUpDTO.getPhone());
-        } else {
-            emailService.checkIfThereAreTooManyRequestsOrThrow(signUpDTO.getEmail());
-            tempUser = userRepository.findByEmailIgnoreCase(signUpDTO.getEmail());
-        }
+        String username = signUpDTO.getUsername();
+        boolean phone = true;
+        if (username.matches(RestConstants.UZB_PHONE_NUMBER_REGEX)) {
+            smsService.checkIfThereAreTooManyRequestsOrThrow(username);
+            tempUser = userRepository.findByPhoneIgnoreCase(username);
+        } else if (username.matches(RestConstants.EMAIL_REGEX)) {
+            emailService.checkIfThereAreTooManyRequestsOrThrow(username);
+            tempUser = userRepository.findByEmailIgnoreCase(username);
+            phone = false;
+        } else throw RestException.restThrow(MessageConstants.INVALID_PHONE_NUMBER_OR_EMAIL);
 
         if (tempUser.isPresent() && tempUser.get().isEnabled())
             throw RestException.restThrow(MessageConstants.PHONE_OR_EMAIL_ALREADY_REGISTERED);
@@ -109,6 +112,9 @@ public class AuthServiceImpl implements AuthService {
         } else user = userMapper.toUser(signUpDTO);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (phone)
+            user.setPhone(username);
+        else user.setEmail(username);
 
         user = userRepository.save(user);
         return user;

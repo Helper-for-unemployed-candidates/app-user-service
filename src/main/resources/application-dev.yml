@@ -72,9 +72,9 @@ management:
 
 springdoc:
   api-docs:
-    path: /api/v3/api-docs
+    path: /api/v1/u/api-docs
   swagger-ui:
-    path: /api/swagger-ui.html
+    path: /api/v1/u/swagger-ui.html
 
 logging:
   level:
