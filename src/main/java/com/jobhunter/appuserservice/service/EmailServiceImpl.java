@@ -28,6 +28,8 @@ public class EmailServiceImpl implements EmailService {
     private int emailLimit;
     @Value("${app.utils.limit-email-code-duration-hour}")
     private int emailLimitHour;
+    @Value("${app.in-dev}")
+    private boolean isDev;
 
     private final JavaMailSender javaMailSender;
     private final EmailCodeRepository emailCodeRepository;
@@ -93,7 +95,7 @@ public class EmailServiceImpl implements EmailService {
         if (check)
             checkIfThereAreTooManyRequestsOrThrow(to);
 
-        String verificationCode = CommonUtils.generateCode();
+        String verificationCode = CommonUtils.generateCode(isDev);
 
         String message = CommonUtils.generateMessageForEmail(verificationCode);
 

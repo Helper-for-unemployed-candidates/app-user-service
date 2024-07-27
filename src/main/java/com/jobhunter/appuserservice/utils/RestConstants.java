@@ -9,9 +9,9 @@ public interface RestConstants {
             "/actuator/health",
             AuthController.BASE_PATH + AuthController.SIGN_IN_PATH,
             AuthController.BASE_PATH + "/**",
-            RestConstants.BASE_PATH + "/v3/api-docs/**",
-            RestConstants.BASE_PATH + "/swagger-ui/**",
-            RestConstants.BASE_PATH + "/swagger-ui.html",
+            RestConstants.BASE_PATH_V1 + "/api-docs/**",
+            RestConstants.BASE_PATH_V1 + "/swagger-ui/**",
+            RestConstants.BASE_PATH_V1 + "/swagger-ui.html"
     };
 
     String BASE_PATH = "/api";

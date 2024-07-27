@@ -23,13 +23,17 @@ public class SignUpDTO {
     @Schema(description = "If role is COMPANY, then this field is required")
     private CompanyCreateDTO company;
 
-    @Schema(description = "User's email", example = "johndoe@example.com")
+    @Schema(description = "User's email or phone number", example = "johndoe@example.com or 931234567")
+    @NotBlank(message = MessageConstants.EMAIL_OR_PHONE_NUMBER_CAN_NOT_BE_EMPTY)
+    private String username;
+
+    /*@Schema(description = "User's email", example = "johndoe@example.com")
     @Pattern(regexp = RestConstants.EMAIL_REGEX, message = MessageConstants.INVALID_EMAIL)
     private String email;
 
     @Schema(description = "User's phone number", example = "931234567")
     @Pattern(regexp = RestConstants.UZB_PHONE_NUMBER_REGEX, message = MessageConstants.INVALID_PHONE_NUMBER)
-    private String phone;
+    private String phone;*/
 
     @Schema(description = "User's password. Has to contain one upper and one lower case, a number, a symbol. Minimum length is 8 characters")
     @NotBlank(message = MessageConstants.PASSWORD_CAN_NOT_BE_EMPTY)

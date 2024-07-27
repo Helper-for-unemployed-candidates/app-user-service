@@ -31,8 +31,8 @@ public class EskizSmsService implements SmsService {
     private int limitSmsCode;
     @Value("${app.utils.limit-sms-code-duration-hour}")
     private int limitHour;
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
+    @Value("${app.in-dev}")
+    private boolean isDev;
 
     @Override
     public CodeDTO sendVerificationSms(User user, boolean check) {
@@ -85,7 +85,7 @@ public class EskizSmsService implements SmsService {
         if (check)
             checkIfThereAreTooManyRequestsOrThrow(phoneNumber);
 
-        String verificationCode = CommonUtils.generateCode();
+        String verificationCode = CommonUtils.generateCode(isDev);
 
         String message = CommonUtils.generateMessageForSms(verificationCode);
 
