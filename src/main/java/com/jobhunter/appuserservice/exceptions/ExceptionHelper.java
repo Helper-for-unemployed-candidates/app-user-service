@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -226,6 +227,12 @@ public class ExceptionHelper {
         );
     }*/
 
+    @ExceptionHandler(value = {NoResourceFoundException.class})
+    public ResponseEntity<?> handleException(NoResourceFoundException ex) {
+        return new ResponseEntity<>(
+                Response.errorResponse(MessageConstants.PAGE_NOT_FOUND, 404),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<?> handleException(Exception ex) {

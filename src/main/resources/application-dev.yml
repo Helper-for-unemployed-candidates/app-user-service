@@ -43,6 +43,7 @@ app:
     limit-email-code-duration-hour: 24
   upload:
     folder: /attachments
+  in-dev: true
 
 jwt:
   access:
@@ -78,7 +79,7 @@ springdoc:
 
 logging:
   level:
-    root: warn
+    root: error
   file:
     name: figure-this-shit-out.log
   logback:

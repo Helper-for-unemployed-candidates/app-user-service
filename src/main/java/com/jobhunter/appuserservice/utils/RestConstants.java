@@ -7,6 +7,7 @@ public interface RestConstants {
 
     String[] OPEN_PAGES = {
             "/actuator/health",
+            "/actuator/info",
             AuthController.BASE_PATH + AuthController.SIGN_IN_PATH,
             AuthController.BASE_PATH + "/**",
             RestConstants.BASE_PATH_V1 + "/api-docs/**",
