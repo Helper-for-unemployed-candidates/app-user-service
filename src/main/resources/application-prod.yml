@@ -44,6 +44,7 @@ app:
   upload:
     folder: /attachments
   in-dev: true
+
 jwt:
   access:
     key: cksdIOJHGytgyuhd4651846DE7E0plmnlo22455hkfjsieioef45785654czxdkcjasincosaffd
@@ -60,7 +61,7 @@ eureka:
     prefer-ip-address: true
   client:
     serviceUrl:
-      defaultZone: http://ec2-51-20-67-130.eu-north-1.compute.amazonaws.com:8762/eureka
+      defaultZone: http://104.197.130.41:8762:8762/eureka
 
 management:
   tracing:
